@@ -1,0 +1,462 @@
+cbmcArguments:
+  # Do not generate coverage comments on generated tests.
+  java-generate-no-comments: true
+phases:
+  -
+  #Phase 0 PRETTY AND SIMPLE - Simple models, quick cover, pretty Tests, Do Not Test Private Method Directly
+    timeout: 180
+    cbmcArguments:
+      # Use simple models containers (ArrayList, HashMap, HashSet,...) will have a maximum size of one.
+      classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 1500
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: true
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 1
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [ private ]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # Instrument the file as opposed to the function only
+      cover-only: file
+      # Set string input value  
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+  -
+  #Phase 1 PRETTY AND COMPLEX - Standard models, longer run time, pretty tests, Do Not Test Private Method Directly
+    timeout: 180
+    cbmcArguments:
+      # Use the standard models library
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: false
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Set string input value  
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 2
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [ private ]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # instrument the file as opposed to the function only
+      cover-only: file
+  -
+  #Phase 2 Simple and Private Directly
+    timeout: 180
+    cbmcArguments:
+      # Use simple models containers (ArrayList, HashMap, HashSet,...) will have a maximum size of one.
+      classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 1500
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: true
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 1
+      # Set string input value  
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+      # If the logs contain output of the following then proceed to phase X
+    nextPhase:
+      # If the function is not analysable then do not pass onto the next phase
+      not_analyzed: null
+  -
+  #Phase 3 Complex and Private Directly
+    timeout: 180
+    cbmcArguments:
+      # Use the standard models library.
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 3000
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 30
+      # Bound the length of input strings.
+      max-nondet-string-length: 30
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 3
+      # Set string input value  
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c"]
+  -
+  #Phase 4 EXCEPTIONS
+    timeout: 180
+    cbmcArguments:
+      # Use the standard models library.
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 30
+      # Bound the length of input strings.
+      max-nondet-string-length: 30
+      # Add constraint that strings are printable
+      string-printable: false
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: true
+      # Set an upper bound on loop unwinding.
+  -
+    #PHASE 5 Big numbers and less contraints on inputs 
+    timeout: 300
+    cbmcArguments:
+      # Use the standard models library.
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: false
+      # Constrain the size of arrays created in the analyzed code.
+      java-max-vla-length: 10000
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 100
+      # Bound the length of input strings.
+      max-nondet-string-length: 100
+      # Add constraint that strings are printable
+      string-printable: false
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 6
+units:
+# Target TGF: 6097.58356019
+#  >methods=76
+#  >complexity=7401
+#  >construction=481.5
+#  >dependency=9.86056304806
+ - target:
+   - dir: jobs/pacman-awsrules/target/classes
+     file: com/tmobile/cloud/awsrules/utils/PacmanUtils.class
+     sourceDir: jobs/pacman-awsrules/src/main/java
+     sourceFile: com/tmobile/cloud/awsrules/utils/PacmanUtils.java
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/rule/Annotation.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/rule/Annotation.java
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/rule/Annotation$Type.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/rule/Annotation.java
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/exception/RuleExecutionFailedExeption.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/exception/RuleExecutionFailedExeption.java
+   - dir: jobs/pacman-awsrules/target/classes
+     file: com/tmobile/cloud/awsrules/utils/RulesElasticSearchRepositoryUtil.class
+     sourceDir: jobs/pacman-awsrules/src/main/java
+     sourceFile: com/tmobile/cloud/awsrules/utils/RulesElasticSearchRepositoryUtil.java
+   - dir: jobs/pacman-awsrules/target/classes
+     file: com/tmobile/cloud/awsrules/utils/PacmanUtils$4.class
+     sourceDir: jobs/pacman-awsrules/src/main/java
+     sourceFile: com/tmobile/cloud/awsrules/utils/PacmanUtils.java
+   - dir: jobs/pacman-awsrules/target/classes
+     file: com/tmobile/cloud/awsrules/utils/PacmanUtils$3.class
+     sourceDir: jobs/pacman-awsrules/src/main/java
+     sourceFile: com/tmobile/cloud/awsrules/utils/PacmanUtils.java
+   - dir: jobs/pacman-awsrules/target/classes
+     file: com/tmobile/cloud/awsrules/utils/PacmanUtils$2.class
+     sourceDir: jobs/pacman-awsrules/src/main/java
+     sourceFile: com/tmobile/cloud/awsrules/utils/PacmanUtils.java
+   - dir: jobs/pacman-awsrules/target/classes
+     file: com/tmobile/cloud/awsrules/utils/PacmanUtils$1.class
+     sourceDir: jobs/pacman-awsrules/src/main/java
+     sourceFile: com/tmobile/cloud/awsrules/utils/PacmanUtils.java
+# Target TGF: 1311.42045455
+#  >methods=27
+#  >complexity=792
+#  >construction=101.25
+#  >dependency=6.06313131313
+ - target:
+   - dir: jobs/pacman-rule-engine-2.0/target/classes
+     file: com/tmobile/pacman/util/ESUtils.class
+     sourceDir: jobs/pacman-rule-engine-2.0/src/main/java
+     sourceFile: com/tmobile/pacman/util/ESUtils.java
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/rule/Annotation.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/rule/Annotation.java
+   - dir: jobs/pacman-rule-engine-2.0/target/classes
+     file: com/tmobile/pacman/util/CommonUtils.class
+     sourceDir: jobs/pacman-rule-engine-2.0/src/main/java
+     sourceFile: com/tmobile/pacman/util/CommonUtils.java
+# Target TGF: 869.341483516
+#  >methods=16
+#  >complexity=660
+#  >construction=110.25
+#  >dependency=3.55503663004
+ - target:
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/utils/CommonUtils.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/utils/CommonUtils.java
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/rule/Annotation.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/rule/Annotation.java
+# Target TGF: 1037.25
+#  >methods=9
+#  >complexity=166
+#  >construction=36.0
+#  >dependency=1.91666666667
+ - target:
+   - dir: api/pacman-api-asset/target/classes
+     file: com/tmobile/pacman/api/asset/controller/Util.class
+     sourceDir: api/pacman-api-asset/src/main/java
+     sourceFile: com/tmobile/pacman/api/asset/controller/Util.java
+   - dir: api/pacman-api-asset/target/classes
+     file: com/tmobile/pacman/api/asset/service/AssetService.class
+     sourceDir: api/pacman-api-asset/src/main/java
+     sourceFile: com/tmobile/pacman/api/asset/service/AssetService.java
+# Target TGF: 1075.23736264
+#  >methods=14
+#  >complexity=1056
+#  >construction=90.0
+#  >dependency=1.27851037851
+ - target:
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/util/AssetGroupUtil.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/util/AssetGroupUtil.java
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/util/Util.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/util/Util.java
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/util/HttpUtil.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/util/HttpUtil.java
+# Target TGF: 11494.875
+#  >methods=65
+#  >complexity=1625
+#  >construction=504.0
+#  >dependency=53.0416666667
+ - target:
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/file/FileManager.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/file/FileManager.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/LoadBalancerVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/LoadBalancerVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/SGRuleVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/SGRuleVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/file/FileGenerator.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/file/FileGenerator.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/TargetGroupVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/TargetGroupVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/CheckVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/CheckVH.java
+# Target TGF: 2102.38314777
+#  >methods=46
+#  >complexity=1443
+#  >construction=249.75
+#  >dependency=8.11566576698
+ - target:
+   - dir: jobs/pacman-rule-engine-2.0/target/classes
+     file: com/tmobile/pacman/util/CommonUtils.class
+     sourceDir: jobs/pacman-rule-engine-2.0/src/main/java
+     sourceFile: com/tmobile/pacman/util/CommonUtils.java
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/rule/Annotation.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/rule/Annotation.java
+   - dir: jobs/pacman-rule-engine-2.0/target/classes
+     file: com/tmobile/pacman/util/CommonUtils$1.class
+     sourceDir: jobs/pacman-rule-engine-2.0/src/main/java
+     sourceFile: com/tmobile/pacman/util/CommonUtils.java
+# Target TGF: 1173.3375
+#  >methods=20
+#  >complexity=624
+#  >construction=87.75
+#  >dependency=4.43333333333
+ - target:
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/utils/ESUtils.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/utils/ESUtils.java
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/utils/CommonUtils.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/utils/CommonUtils.java
+   - dir: commons/pac-batch-commons/target/classes
+     file: com/tmobile/pacman/commons/rule/Annotation.class
+     sourceDir: commons/pac-batch-commons/src/main/java
+     sourceFile: com/tmobile/pacman/commons/rule/Annotation.java
+# Target TGF: 1832.25324675
+#  >methods=26
+#  >complexity=1316
+#  >construction=119.25
+#  >dependency=2.65836940837
+ - target:
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/es/ESManager.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/es/ESManager.java
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/util/Constants.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/util/Constants.java
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/es/ESManager$2.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/es/ESManager.java
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/util/Util.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/util/Util.java
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/es/ESManager$1.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/es/ESManager.java
+   - dir: jobs/pacman-data-shipper/target/classes
+     file: com/tmobile/cso/pacman/datashipper/config/ConfigManager.class
+     sourceDir: jobs/pacman-data-shipper/src/main/java
+     sourceFile: com/tmobile/cso/pacman/datashipper/config/ConfigManager.java
+# Target TGF: 787.53581753
+#  >methods=55
+#  >complexity=6494
+#  >construction=69.75
+#  >dependency=1.742957607
+ - target:
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/util/InventoryUtil.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/util/InventoryUtil.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/BucketVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/BucketVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/file/ErrorManageUtil.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/file/ErrorManageUtil.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/Resource.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/Resource.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/TargetGroupVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/TargetGroupVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/EbsVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/EbsVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/DynamoVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/DynamoVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/ClassicELBVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/ClassicELBVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/VpcVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/VpcVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/Attribute.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/Attribute.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/EfsVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/EfsVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/AccessKeyMetadataVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/AccessKeyMetadataVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/KMSKeyVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/KMSKeyVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/UserVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/UserVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/DBClusterVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/DBClusterVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/LambdaVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/LambdaVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/CheckVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/CheckVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/DBInstanceVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/DBInstanceVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/PhdVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/PhdVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/VpcEndPointVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/VpcEndPointVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/util/InventoryUtil$1.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/util/InventoryUtil.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/LoadBalancerVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/LoadBalancerVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/SQSVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/SQSVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/RedshiftVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/RedshiftVH.java
+   - dir: jobs/pacman-cloud-discovery/target/classes
+     file: com/tmobile/cso/pacman/inventory/vo/CloudFrontVH.class
+     sourceDir: jobs/pacman-cloud-discovery/src/main/java
+     sourceFile: com/tmobile/cso/pacman/inventory/vo/CloudFrontVH.java
